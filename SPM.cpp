@@ -63,3 +63,5 @@ ostream &operator<<(ostream &output,SPM &spm_p){
    return output;
 
 }
+
+/* vim: set ts=3 sw=3 expandtab :*/

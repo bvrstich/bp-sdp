@@ -317,3 +317,5 @@ void PHM::in_sp(const char *filename){
    this->symmetrize();
 
 }
+
+/* vim: set ts=3 sw=3 expandtab :*/

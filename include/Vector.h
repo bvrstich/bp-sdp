@@ -413,3 +413,5 @@ double Vector<MatrixType>::centerpot(double alpha){
 }
 
 #endif
+
+/* vim: set ts=3 sw=3 expandtab :*/

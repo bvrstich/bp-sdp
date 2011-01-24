@@ -520,3 +520,5 @@ double EIG::centerpot(double alpha,EIG &eigen_Z,double c_S,double c_Z){
    return ward;
 
 }
+
+/* vim: set ts=3 sw=3 expandtab :*/
