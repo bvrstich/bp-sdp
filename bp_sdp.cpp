@@ -4,8 +4,8 @@
  * for optimizing the second order density matrix using the P Q G T1 and T2 N-representability conditions.
  * The method used is a path following algorithm with predictor corrector steps.
  * At compile time you can decide which condtions will be active compile with make PQ, PQG, PQGT1, PQGT2 or PQGT=(for all conditions).
- * @author Brecht Verstichel
- * @date 16-04-2010
+ * @author Brecht Verstichel, Ward Poelmans
+ * @date 24-01-2011
  */
 
 #include <iostream>
@@ -30,16 +30,17 @@ using std::ofstream;
  * For more information on the actual method, see primal_dual.pdf
  */
 
-int main(void){
-
+int main(int argc,char **argv)
+{
    cout.precision(10);
 
    int M = 8;//dim sp hilbert space
    int N = 4;//nr of particles
+   double U = atof( argv[1] );
 
    //hamiltoniaan
    TPM ham(M,N);
-   ham.hubbard(0,1.0);
+   ham.hubbard(0,U);
 
    TPM ham_copy(ham);
 
