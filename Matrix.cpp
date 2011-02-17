@@ -459,7 +459,7 @@ void Matrix::sep_pm(Matrix &p,Matrix &m){
    //fill the plus and minus matrix
    int i = 0;
 
-   while(eigenvalues[i] < 0.0){
+   while(i < n && eigenvalues[i] < 0.0){
 
       for(int j = 0;j < n;++j)
          for(int k = j;k < n;++k)
