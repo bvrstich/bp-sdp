@@ -129,7 +129,7 @@ int main(int argc,char **argv)
 
          P_conv = sqrt(v.ddot(v));
 
-         cout << "P\t" << P_conv << "\t" << sigma << endl;
+         cout << "P\t\t\t" << P_conv << endl;
 
      }
 
@@ -148,11 +148,15 @@ int main(int argc,char **argv)
 
       D_conv = sqrt(W.ddot(W));
 
-      cout << "D\t" << D_conv << "\t" << sigma << endl;
+      cout << "D\t" << D_conv << "\t\t\t\t" << sigma << endl;
 
    }
 
-   cout << ham_copy.ddot(Z.tpm(0)) << endl;
+   cout << endl;
+   cout << "Energy: " << ham_copy.ddot(Z.tpm(0)) << endl;
+   cout << "pd gap: " << Z.ddot(X) << endl;
+   cout << "primal conv: " << P_conv << endl;
+   cout << "dual conv: " << D_conv << endl;
 
    return 0;
 
