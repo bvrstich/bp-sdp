@@ -127,7 +127,11 @@ int main(int argc,char **argv)
 
    double P_conv(1.0),D_conv(1.0);
 
+   // mazziotti uses 1.6 for this
+   double mazzy = 1.0;
+
    int iter;
+   int max_iter = 10;
 
    while(D_conv > tolerance){
 
@@ -135,7 +139,8 @@ int main(int argc,char **argv)
 
       iter = 0;
 
-      while(P_conv > tolerance && iter <= 5){
+      while(P_conv > tolerance  && iter <= max_iter)
+      {
 
          ++iter;
 
@@ -144,13 +149,13 @@ int main(int argc,char **argv)
 
          B -= u_0;
 
-         B.daxpy(1.0/sigma,X);
+         B.daxpy(mazzy/sigma,X);
 
          TPM b(M,N);
 
          b.collaps(1,B);
 
-         b.daxpy(-1.0/sigma,ham);
+         b.daxpy(-mazzy/sigma,ham);
 
          hulp.S(-1,b);
 
@@ -182,9 +187,6 @@ int main(int argc,char **argv)
 
      }
 
-     if(iter == 1)
-        sigma *= 2;
-
       //update primal:
       X = V;
 
@@ -197,7 +199,9 @@ int main(int argc,char **argv)
 
       D_conv = sqrt(W.ddot(W));
 
-      cout << "D\t" << D_conv << "\t\t\t\t" << sigma << endl;
+      sigma *= D_conv/P_conv;
+
+      cout << "D\t" << D_conv << "\t\t\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
 
    }
 
