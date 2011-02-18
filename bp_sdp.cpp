@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <getopt.h>
 
 using std::cout;
 using std::endl;
@@ -34,9 +35,57 @@ int main(int argc,char **argv)
 {
    cout.precision(10);
 
+   // these are the default values
    int M = 8;//dim sp hilbert space
    int N = 4;//nr of particles
-   double U = atof( argv[1] );
+   double U = 1;//onsite interaction strength
+
+   struct option long_options[] =
+   {
+      {"particles",  required_argument, 0, 'n'},
+      {"sites",  required_argument, 0, 'm'},
+      {"interaction", required_argument, 0, 'U'},
+      {"help",  no_argument, 0, 'h'},
+      {0, 0, 0, 0}
+   };
+
+   int i,j;
+   while( (j = getopt_long (argc, argv, "hn:m:U:", long_options, &i)) != -1)
+      switch(j)
+      {
+         case 'h':
+         case '?':
+            cout << "Usage: " << argv[0] << " [OPTIONS]\n"
+               "\n"
+               "    -n, --particles=particles    Set the number of particles\n"
+               "    -m, --sites=sites            Set the number of sites\n"
+               "    -U, --interaction=U          Set the interaction strength\n"
+               "    -h, --help                   Display this help\n"
+               "\n";
+            return 0;
+            break;
+         case 'n':
+            N = atoi(optarg);
+            if( N <= 0)
+            {
+               std::cerr << "Invalid particle number!" << endl;
+               return -1;
+            }
+            break;
+         case 'm':
+            M = atoi(optarg);
+            if( M <= 0)
+            {
+               std::cerr << "Invalid particle number!" << endl;
+               return -2;
+            }
+            break;
+         case 'U':
+            U = atof(optarg);
+            break;
+      }
+
+   cout << "Starting with M=" << M << " N=" << N << " U=" << U << endl;
 
    //hamiltoniaan
    TPM ham(M,N);
