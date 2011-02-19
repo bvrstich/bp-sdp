@@ -121,28 +121,32 @@ int main(int argc,char **argv)
    Z = 0.0;
 
    //what does this do?
-   double sigma = 2.0;
+   double sigma = 1.0;
 
-   double tolerance = 1.0e-4;
+   double tolerance = 1.0e-5;
 
    double P_conv(1.0),D_conv(1.0);
 
    // mazziotti uses 1.6 for this
-   double mazzy = 1.0;
+   double mazzy = 1.6;
 
-   int iter;
+   int iter_dual,iter_primal(0);
    int max_iter = 10;
+
+   int change_sigma = 10;
 
    while(D_conv > tolerance){
 
+      ++iter_primal;
+
       P_conv = 1.0;
 
-      iter = 0;
+      iter_dual = 0;
 
-      while(P_conv > tolerance  && iter <= max_iter)
+      while(P_conv > tolerance  && iter_dual <= max_iter)
       {
 
-         ++iter;
+         ++iter_dual;
 
          //solve system
          SUP B(Z);
@@ -199,7 +203,13 @@ int main(int argc,char **argv)
 
       D_conv = sqrt(W.ddot(W));
 
-      sigma *= D_conv/P_conv;
+      if(iter_primal == change_sigma){
+
+         sigma *= D_conv/P_conv;
+
+         iter_primal = 0;
+
+      }
 
       cout << "D\t" << D_conv << "\t\t\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
 
