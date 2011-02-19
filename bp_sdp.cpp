@@ -121,21 +121,22 @@ int main(int argc,char **argv)
    Z = 0.0;
 
    //what does this do?
-   double sigma = 2.0;
+   double sigma = 1.0;
 
-   double tolerance = 1.0e-4;
+   double tolerance = 1.0e-5;
 
-   double P_conv(1.0),D_conv(1.0);
+   double D_conv(1.0),P_conv(1.0);
 
    int iter;
+   int max_iter = 1;
 
-   while(D_conv > tolerance){
+   while(P_conv > tolerance || D_conv > tolerance){
 
-      P_conv = 1.0;
+      D_conv = 1.0;
 
       iter = 0;
 
-      while(P_conv > tolerance && iter <= 5){
+      while(D_conv > tolerance && iter <= max_iter){
 
          ++iter;
 
@@ -176,14 +177,11 @@ int main(int argc,char **argv)
 
          v -= ham;
 
-         P_conv = sqrt(v.ddot(v));
+         D_conv = sqrt(v.ddot(v));
 
-         cout << "P\t\t\t" << P_conv << endl;
+         cout << "D\t\t\t" << D_conv << endl;
 
      }
-
-     if(iter == 1)
-        sigma *= 2;
 
       //update primal:
       X = V;
@@ -195,17 +193,20 @@ int main(int argc,char **argv)
 
       W -= Z;
 
-      D_conv = sqrt(W.ddot(W));
+      P_conv = sqrt(W.ddot(W));
 
-      cout << "D\t" << D_conv << "\t\t\t\t" << sigma << endl;
+      cout << "P\t" << P_conv << "\t\t\t\t" << sigma << endl;
+
+      if(D_conv < P_conv)
+         sigma *= 1.1;
 
    }
 
    cout << endl;
    cout << "Energy: " << ham_copy.ddot(Z.tpm(0)) << endl;
    cout << "pd gap: " << Z.ddot(X) << endl;
-   cout << "primal conv: " << P_conv << endl;
    cout << "dual conv: " << D_conv << endl;
+   cout << "primal conv: " << P_conv << endl;
 
    return 0;
 
