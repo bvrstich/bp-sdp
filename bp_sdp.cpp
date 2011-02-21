@@ -199,13 +199,11 @@ int main(int argc,char **argv)
 
          sigma *= P_conv/D_conv;
 
-         cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
-
          iter_primal = 0;
 
       }
 
-      //cout << "P\t" << P_conv << "\t\t\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
+      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
 
    }
 
