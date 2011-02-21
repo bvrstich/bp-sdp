@@ -75,7 +75,7 @@ EIG::EIG(SUP &SZ){
  * allocates the memory for the eigenvalues of a SUP object and copies the content of eig_c into it.
  * @param eig_c The input EIG that will be copied into this.
  */
-EIG::EIG(EIG &eig_c){
+EIG::EIG(const EIG &eig_c){
 
    flag = 1;
 
@@ -127,7 +127,7 @@ EIG::EIG(EIG &eig_c){
  * overload equality operator
  * @param eig_c object that will be copied into this.
  */
-EIG &EIG::operator=(EIG &eig_c){
+EIG &EIG::operator=(const EIG &eig_c){
 
    for(int i = 0;i < 2;++i)
       *v_tp[i] = *eig_c.v_tp[i];
@@ -218,7 +218,7 @@ ostream &operator<<(ostream &output,EIG &eig_p){
 /**
  * @return nr of particles
  */
-int EIG::gN(){
+int EIG::gN() const {
 
    return N;
 
@@ -227,7 +227,7 @@ int EIG::gN(){
 /**
  * @return dimension of sp space
  */
-int EIG::gM(){
+int EIG::gM() const {
 
    return M;
 
@@ -236,7 +236,7 @@ int EIG::gM(){
 /**
  * @return dimension of tp space
  */
-int EIG::gn_tp(){
+int EIG::gn_tp() const {
 
    return n_tp;
 
@@ -283,13 +283,24 @@ Vector<TPM> &EIG::tpv(int i){
 
 }
 
+/** 
+ * get the Vector<TPM> object containing the eigenvalues of the TPM blocks P and Q
+ * @param i == 0, the eigenvalues of the P block will be returned, i == 1, the eigenvalues of the Q block will be returned
+ * @return a Vector<TPM> object containing the desired eigenvalues
+ */
+const Vector<TPM> &EIG::tpv(int i) const {
+
+   return *v_tp[i];
+
+}
+
 
 #ifdef __G_CON
 
 /**
  * @return dimension of ph space
  */
-int EIG::gn_ph(){
+int EIG::gn_ph() const {
 
    return n_ph;
 
@@ -305,6 +316,16 @@ Vector<PHM> &EIG::phv(){
 
 }
 
+/** 
+ * get the Vector<PHM> object containing the eigenvalues of the PHM block G
+ * @return a Vector<PHM> object containing the desired eigenvalues
+ */
+const Vector<PHM> &EIG::phv() const {
+
+   return *v_ph;
+
+}
+
 #endif
 
 #ifdef __T1_CON
@@ -312,7 +333,7 @@ Vector<PHM> &EIG::phv(){
 /**
  * @return dimension of dp space
  */
-int EIG::gn_dp(){
+int EIG::gn_dp() const {
 
    return n_dp;
 
@@ -328,6 +349,16 @@ Vector<DPM> &EIG::dpv(){
 
 }
 
+/** 
+ * get the Vector<DPM> object containing the eigenvalues of the DPM block T1
+ * @return a Vector<DPM> object containing the desired eigenvalues
+ */
+const Vector<DPM> &EIG::dpv() const {
+
+   return *v_dp;
+
+}
+
 #endif
 
 #ifdef __T2_CON
@@ -335,7 +366,7 @@ Vector<DPM> &EIG::dpv(){
 /**
  * @return dimension of pph space
  */
-int EIG::gn_pph(){
+int EIG::gn_pph() const {
 
    return n_pph;
 
@@ -351,12 +382,22 @@ Vector<PPHM> &EIG::pphv(){
 
 }
 
+/** 
+ * get the Vector<PPHM> object containing the eigenvalues of the PPHM block T2
+ * @return a Vector<PPHM> object containing the desired eigenvalues
+ */
+const Vector<PPHM> &EIG::pphv() const {
+
+   return *v_pph;
+
+}
+
 #endif
 
 /**
  * @return total dimension of the EIG object
  */
-int EIG::gdim(){
+int EIG::gdim() const {
 
    return dim;
 
@@ -367,7 +408,7 @@ int EIG::gdim(){
  * @return the minimal element present in this EIG object.
  * watch out, only works when EIG is filled with the eigenvalues of a diagonalized SUP matrix
  */
-double EIG::min(){
+double EIG::min() const {
 
    //lowest eigenvalue of P block
    double ward = v_tp[0]->min();
@@ -408,7 +449,7 @@ double EIG::min(){
  * @return the maximum element present in this EIG object.
  * watch out, only works when EIG is filled with the eigenvalues of a diagonalized SUP matrix
  */
-double EIG::max(){
+double EIG::max() const {
 
    //highest eigenvalue of P block
    double ward = v_tp[0]->max();
@@ -449,7 +490,7 @@ double EIG::max(){
  * @return The deviation of the central path as calculated with the logarithmic barrierfunction, the EIG object is calculated
  * in SUP::center_dev.
  */
-double EIG::center_dev(){
+double EIG::center_dev() const {
 
    double sum = v_tp[0]->sum() + v_tp[1]->sum();
 
@@ -492,7 +533,7 @@ double EIG::center_dev(){
  * @param c_S = Tr (DS Z)/Tr (SZ): parameter calculated in SUP::line_search
  * @param c_Z = Tr (S DZ)/Tr (SZ): parameter calculated in SUP::line_search
  */
-double EIG::centerpot(double alpha,EIG &eigen_Z,double c_S,double c_Z){
+double EIG::centerpot(double alpha,const EIG &eigen_Z,double c_S,double c_Z) const {
 
    double ward = dim*log(1.0 + alpha*(c_S + c_Z));
 

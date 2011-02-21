@@ -34,16 +34,16 @@ class SPM : public Matrix {
       SPM(int M,int N);
 
       //copy constructor
-      SPM(SPM &);
+      SPM(const SPM &);
 
       //destructor
       virtual ~SPM();
 
       using Matrix::operator=;
 
-      int gN();
+      int gN() const;
 
-      int gM();
+      int gM() const;
 
       /**
        * constructs a SPM from a TPM or a PHM. Definition of these functions are in different notes.
@@ -52,7 +52,7 @@ class SPM : public Matrix {
        * @param MT PHM or TPM inputmatrix.
        */
       template<class MatrixType>
-         void constr(double scale,MatrixType &MT){
+         void constr(double scale,const MatrixType &MT){
 
             for(int a = 0;a < M;++a)
                for(int b = a;b < M;++b){
@@ -76,7 +76,7 @@ class SPM : public Matrix {
        * @param MT the PHM or TPM inputmatrix.
        */
       template<class MatrixType>
-         SPM(double scale,MatrixType &MT) : Matrix(MT.gM()) {
+         SPM(double scale,const MatrixType &MT) : Matrix(MT.gM()) {
 
             this->M = MT.gM();
             this->N = MT.gN();
@@ -91,7 +91,7 @@ class SPM : public Matrix {
        * @param MT the PHM or TPM inputmatrix.
        */
       template<class MatrixType>
-         void bar(MatrixType &MT){
+         void bar(const MatrixType &MT){
 
             for(int a = 0;a < M;++a)
                for(int b = a;b < M;++b){

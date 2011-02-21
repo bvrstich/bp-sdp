@@ -22,7 +22,7 @@ SPM::SPM(int M,int N) : Matrix(M) {
  * copy constructor
  * @param spm_copy content of this matrix will be copied into the constructed matrix
  */
-SPM::SPM(SPM &spm_copy) : Matrix(spm_copy) {
+SPM::SPM(const SPM &spm_copy) : Matrix(spm_copy) {
 
    this->M = spm_copy.gM();
    this->N = spm_copy.gN();
@@ -39,7 +39,7 @@ SPM::~SPM(){
 /**
  * @return nr of particles
  */
-int SPM::gN(){
+int SPM::gN() const {
 
    return N;
 
@@ -48,7 +48,7 @@ int SPM::gN(){
 /**
  * @return dimension of sp space and of matrix
  */
-int SPM::gM(){
+int SPM::gM() const {
 
    return M;
 

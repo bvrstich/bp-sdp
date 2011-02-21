@@ -41,7 +41,7 @@ class TPM : public Matrix {
       TPM(int M,int N);
 
       //copy constructor
-      TPM(TPM &);
+      TPM(const TPM &);
 
       //file constructor
       TPM(const char *);
@@ -57,57 +57,57 @@ class TPM : public Matrix {
       double operator()(int a,int b,int c,int d) const;
 
       //geef N terug
-      int gN();
+      int gN() const;
 
       //geef N terug
-      int gM();
+      int gM() const;
 
       //geef n terug
-      int gn();
+      int gn() const;
 
       void hubbard(int option,double U);
 
       //Q afbeelding en zijn inverse
-      void Q(int option,TPM &);
+      void Q(int option,const TPM &);
 
       //Q like afbeelding Q(A,B,C,tpm_d)
-      void Q(int option,double A,double B,double C,TPM &);
+      void Q(int option,double A,double B,double C,const TPM &);
 
       //overlapmatrix afbeelding en zijn inverse
-      void S(int option,TPM &);
+      void S(int option,const TPM &);
 
       void unit();
 
       void proj_Tr();
 
       //de hessiaan afbeelding:
-      void H(TPM &b,SUP &D);
+      void H(const TPM &b,const SUP &D);
 
       //los het stelsel op
-      int solve(TPM &b,SUP &D);
+      int solve(TPM &b,const SUP &D);
 
       //de G down en inverse G up
-      void G(int option,PHM &);
+      void G(int option,const PHM &);
 
       //trace one pair of indices of DPM
-      void bar(DPM &);
+      void bar(const DPM &);
 
       //trace one pair of indices of PPHM
-      void bar(PPHM &);
+      void bar(const PPHM &);
 
       //T1 down
-      void T(int option,DPM &);
+      void T(int option,const DPM &);
 
       //T2 down
-      void T(PPHM &);
+      void T(const PPHM &);
 
       void min_unit(double scale);
 
       void min_qunit(double scale);
 
-      void collaps(int option,SUP &);
+      void collaps(int option,const SUP &);
 
-      void out(const char *filename);
+      void out(const char *filename) const;
 
       void sp_pairing(double );
 

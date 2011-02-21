@@ -72,7 +72,7 @@ PPHM::PPHM(int M,int N) : Matrix(M*M*(M - 1)/2) {
  * if counter == 0, allocates and constructs the lists containing the relationship between sp and pph basis.
  * @param pphm_c input PPHM to be copied
  */
-PPHM::PPHM(PPHM &pphm_c) : Matrix(pphm_c){
+PPHM::PPHM(const PPHM &pphm_c) : Matrix(pphm_c){
 
    this->N = pphm_c.N;
    this->M = pphm_c.M;
@@ -216,7 +216,7 @@ ostream &operator<<(ostream &output,PPHM &pphm_p){
 /**
  * @return nr of particles
  */
-int PPHM::gN(){
+int PPHM::gN() const {
 
    return N;
 
@@ -225,7 +225,7 @@ int PPHM::gN(){
 /**
  * @return dimension of sp space
  */
-int PPHM::gM(){
+int PPHM::gM() const {
 
    return M;
 
@@ -234,7 +234,7 @@ int PPHM::gM(){
 /**
  * @return dimension of pph space and of Matrix
  */
-int PPHM::gn(){
+int PPHM::gn() const {
 
    return n;
 
@@ -245,7 +245,7 @@ int PPHM::gn(){
  * @param option == 0, regular T2, == 1, special (incorrect) T2, keep for test in program with regular T2
  * @param tpm input TPM
  */
-void PPHM::T(int option,TPM &tpm){
+void PPHM::T(int option,const TPM &tpm){
 
    if(option == 0){
 
@@ -394,7 +394,7 @@ void PPHM::min_tunit(double scale){
 /** 
  * @return the skew trace, for PPHM matrices defined as sum_abc PPHM(a,b,a,c,b,c)
  */
-double PPHM::skew_trace(){
+double PPHM::skew_trace() const {
 
    double ward = 0.0;
 
