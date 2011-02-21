@@ -125,25 +125,25 @@ int main(int argc,char **argv)
 
    double tolerance = 1.0e-5;
 
-   double P_conv(1.0),D_conv(1.0);
+   double D_conv(1.0),P_conv(1.0);
 
    // mazziotti uses 1.6 for this
    double mazzy = 1.6;
 
    int iter_dual,iter_primal(0);
-   int max_iter = 10;
+   int max_iter = 1;
 
-   int change_sigma = 10;
+   int change_sigma = 20;
 
-   while(D_conv > tolerance){
+   while(P_conv > tolerance || D_conv > tolerance){
 
       ++iter_primal;
 
-      P_conv = 1.0;
+      D_conv = 1.0;
 
       iter_dual = 0;
 
-      while(P_conv > tolerance  && iter_dual <= max_iter)
+      while(D_conv > tolerance  && iter_dual <= max_iter)
       {
 
          ++iter_dual;
@@ -185,9 +185,9 @@ int main(int argc,char **argv)
 
          v -= ham;
 
-         P_conv = sqrt(v.ddot(v));
+         D_conv = sqrt(v.ddot(v));
 
-         cout << "P\t\t\t" << P_conv << endl;
+         //cout << "D\t\t\t" << D_conv << endl;
 
      }
 
@@ -201,25 +201,27 @@ int main(int argc,char **argv)
 
       W -= Z;
 
-      D_conv = sqrt(W.ddot(W));
+      P_conv = sqrt(W.ddot(W));
 
       if(iter_primal == change_sigma){
 
-         sigma *= D_conv/P_conv;
+         sigma *= P_conv/D_conv;
+
+         cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
 
          iter_primal = 0;
 
       }
 
-      cout << "D\t" << D_conv << "\t\t\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
+      //cout << "P\t" << P_conv << "\t\t\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
 
    }
 
    cout << endl;
    cout << "Energy: " << ham_copy.ddot(Z.tpm(0)) << endl;
    cout << "pd gap: " << Z.ddot(X) << endl;
-   cout << "primal conv: " << P_conv << endl;
    cout << "dual conv: " << D_conv << endl;
+   cout << "primal conv: " << P_conv << endl;
 
    return 0;
 
