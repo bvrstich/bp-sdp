@@ -487,4 +487,85 @@ void Matrix::sep_pm(Matrix &p,Matrix &m){
 
 }
 
+/**
+ * Seperate matrix into two matrices, a positive and negative semidefinite part.
+ * @param p positive (plus) output part
+ * @param m negative (minus) output part
+ */
+void Matrix::sep2_pm(Matrix &p,Matrix &m){
+
+   //init:
+   p = 0;
+   m = 0;
+
+   double *eigenvalues = new double [n];
+
+   double **eigenvectors = new double * [n];
+   eigenvectors[0] = new double [n*n];
+
+   for(int i = 1;i < n;++i)
+      eigenvectors[i] = eigenvectors[i - 1] + n;
+
+   //diagonalize orignal matrix:
+   char jobz = 'V';
+   char uplo = 'U';
+   char range = 'A';
+   int i1,i2;
+   double d1,d2;
+
+   double abstol = 1e-15;
+
+   int lwork = 26*n;
+   int liwork = 10*n;
+
+   double *work = new double [lwork];
+   int *iwork = new int [liwork];
+
+   int isuppz[2*n];
+
+   int info = 0;
+   int ne;
+
+   dsyevr_(&jobz,&range,&uplo,&n,matrix[0],&n,&d1,&d2,&i1,&i2,&abstol,&ne,eigenvalues,eigenvectors[0],&n,&isuppz[0],work,&lwork,iwork,&liwork,&info);
+
+   if( info )
+      std::cout << "Something went wrong in syevr" << std::endl;
+
+   delete [] work;
+   delete [] iwork;
+
+   //fill the plus and minus matrix
+   int i = 0;
+
+   while(i < n && eigenvalues[i] < 0.0){
+
+      for(int j = 0;j < n;++j)
+         for(int k = j;k < n;++k)
+            m(j,k) += eigenvalues[i] * eigenvectors[i][j] * eigenvectors[i][k];
+
+      ++i;
+
+   }
+
+   m.symmetrize();
+
+   while(i < n){
+
+      for(int j = 0;j < n;++j)
+         for(int k = j;k < n;++k)
+            p(j,k) += eigenvalues[i] * eigenvectors[i][j] * eigenvectors[i][k];
+
+      ++i;
+
+   }
+
+   p.symmetrize();
+
+
+   delete [] eigenvalues;
+   delete [] eigenvectors[0];
+   delete [] eigenvectors;;
+
+}
+
 /* vim: set ts=3 sw=3 expandtab :*/

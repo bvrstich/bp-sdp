@@ -93,6 +93,8 @@ class Matrix{
 
       void sep_pm(Matrix &p,Matrix &m);
 
+      void sep2_pm(Matrix &p,Matrix &m);
+
    private:
 
       //!double pointer of doubles, contains the numbers, the matrix
