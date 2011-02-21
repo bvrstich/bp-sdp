@@ -1,11 +1,10 @@
 /**
  * @mainpage 
- * This is an implementation of a primal dual interior point method
- * for optimizing the second order density matrix using the P Q G T1 and T2 N-representability conditions.
- * The method used is a path following algorithm with predictor corrector steps.
+ * This is an implementation of a boundary point method to solve a semidefinite program:
+ * we optimizing the second order density matrix using the P Q G T1 and T2 N-representability conditions.
  * At compile time you can decide which condtions will be active compile with make PQ, PQG, PQGT1, PQGT2 or PQGT=(for all conditions).
  * @author Brecht Verstichel, Ward Poelmans
- * @date 24-01-2011
+ * @date 21-01-2011
  */
 
 #include <iostream>
@@ -22,13 +21,6 @@ using std::ofstream;
 /**
  * 
  * In the main the actual program is run.\n 
- * Part 1: An easy initial point is taken and then centered to the required precision (flag == 0)\n
- * Part 2: When the primal dual point is sufficiently centered steps are taken to reduce the
- * primal dual gap and take a large step in that direction (predictor) (flag == 1)\n
- * After each step a correcting step (flag == 2) is taken that brings the primal dual point closer to
- * the central path.\n
- * Part 3: When the primal dual gap is smaller that the required accuracy exit the while. (flag == 3)\n
- * For more information on the actual method, see primal_dual.pdf
  */
 
 int main(int argc,char **argv)
