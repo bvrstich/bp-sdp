@@ -115,7 +115,7 @@ int main(int argc,char **argv)
    //what does this do?
    double sigma = 1.0;
 
-   double tolerance = 1.0e-5;
+   double tolerance = 1.0e-7;
 
    double D_conv(1.0),P_conv(1.0);
 
@@ -171,8 +171,6 @@ int main(int argc,char **argv)
 
          D_conv = sqrt(v.ddot(v));
 
-         cout << "D\t\t\t" << D_conv << endl;
-
      }
 
       //update primal:
@@ -187,10 +185,12 @@ int main(int argc,char **argv)
 
       P_conv = sqrt(W.ddot(W));
 
-      cout << "P\t" << P_conv << "\t\t\t\t" << sigma << endl;
+      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
 
       if(D_conv < P_conv)
-         sigma *= 1.1;
+         sigma *= 1.01;
+      else
+         sigma /= 1.01;
 
    }
 
