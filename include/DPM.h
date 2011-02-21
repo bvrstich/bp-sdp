@@ -33,7 +33,7 @@ class DPM : public Matrix {
       DPM(int M,int N);
 
       //copy constructor
-      DPM(DPM &);
+      DPM(const DPM &);
 
       //destructor
       virtual ~DPM();
@@ -46,22 +46,22 @@ class DPM : public Matrix {
       double operator()(int a,int b,int c,int d,int e,int f) const;
 
       //geef N terug
-      int gN();
+      int gN() const;
 
       //geef M terug
-      int gM();
+      int gM() const;
 
       //geef dim terug
-      int gn();
+      int gn() const;
 
       //generalized T1 map
-      void T(double,double,double,TPM &);
+      void T(double,double,double,const TPM &);
 
       //maak een DPM van een TPM via de T1 conditie
-      void T(int option,TPM &);
+      void T(int option,const TPM &);
 
       //maak een DPM van een TPM via de hat functie
-      void hat(TPM &);
+      void hat(const TPM &);
 
       //deduct scale times T1(1) matrix
       void min_tunit(double scale);

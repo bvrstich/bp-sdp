@@ -67,7 +67,7 @@ PHM::PHM(int M,int N) : Matrix(M*M) {
  * if counter == 0, allocates and constructs the lists containing the relationship between sp and ph basis.
  * @param phm_c PHM to be copied into (*this)
  */
-PHM::PHM(PHM &phm_c) : Matrix(phm_c){
+PHM::PHM(const PHM &phm_c) : Matrix(phm_c){
 
    this->N = phm_c.N;
    this->M = phm_c.M;
@@ -147,6 +147,23 @@ double &PHM::operator()(int a,int b,int c,int d){
 
 }
 
+/**
+ * access the elements of the matrix in sp mode, 
+ * @param a first sp index that forms the ph row index i together with b
+ * @param b second sp index that forms the ph row index i together with a
+ * @param c first sp index that forms the ph column index j together with d
+ * @param d second sp index that forms the ph column index j together with c
+ * @return the number on place PHM(i,j)
+ */
+double PHM::operator()(int a,int b,int c,int d) const {
+
+   int i = s2ph[a][b];
+   int j = s2ph[c][d];
+
+   return (*this)(i,j);
+
+}
+
 ostream &operator<<(ostream &output,PHM &phm_p){
 
    for(int i = 0;i < phm_p.n;++i)
@@ -165,7 +182,7 @@ ostream &operator<<(ostream &output,PHM &phm_p){
 /**
  * @return number of particles
  */
-int PHM::gN(){
+int PHM::gN() const {
 
    return N;
 
@@ -174,7 +191,7 @@ int PHM::gN(){
 /**
  * @return number of single particle oribals
  */
-int PHM::gM(){
+int PHM::gM() const {
 
    return M;
 
@@ -183,7 +200,7 @@ int PHM::gM(){
 /**
  * @return dimension of the particle hole space, which is also the dimension of the matrix
  */
-int PHM::gn(){
+int PHM::gn() const {
 
    return n;
 
@@ -194,7 +211,7 @@ int PHM::gn(){
  * @param option = 1 G_up map is used, = -1 G^{-1}_down map is used
  * @param tpm input TPM
  */
-void PHM::G(int option,TPM &tpm){
+void PHM::G(int option,const TPM &tpm){
 
    SPM spm(M,N);
 
@@ -236,7 +253,7 @@ void PHM::G(int option,TPM &tpm){
  * sum_{ab} PHM(a,a,b,b)
  * @return the skew trace
  */
-double PHM::skew_trace(){
+double PHM::skew_trace() const {
 
    double ward = 0.0;
 
@@ -273,7 +290,7 @@ void PHM::min_gunit(double scale){
  * Map a PPHM (pphm) object onto a PHM (*this) object by tracing one pair of indices (see primal_dual.pdf for more info)
  * @param pphm Input PPHM
  */
-void PHM::bar(PPHM &pphm){
+void PHM::bar(const PPHM &pphm){
 
    int a,b,c,d;
 

@@ -11,45 +11,6 @@ using std::ostream;
 #include "DPM.h"
 #include "PPHM.h"
 
-//definitions:
-#ifdef PQ
-
-#define __Q_CON
-
-#endif
-
-#ifdef PQG
-
-#define __Q_CON
-#define __G_CON
-
-#endif
-
-#ifdef PQGT1
-
-#define __Q_CON
-#define __G_CON
-#define __T1_CON
-
-#endif
-
-#ifdef PQGT2
-
-#define __Q_CON
-#define __G_CON
-#define __T2_CON
-
-#endif
-
-#ifdef PQGT
-
-#define __Q_CON
-#define __G_CON
-#define __T1_CON
-#define __T2_CON
-
-#endif
-
 class EIG;
 
 /**
@@ -79,40 +40,42 @@ class SUP{
       SUP(int M,int N);
 
       //copy constructor
-      SUP(SUP &);
+      SUP(const SUP &);
 
       //destructor
       ~SUP();
 
       //overload += operator
-      SUP &operator+=(SUP &);
+      SUP &operator+=(const SUP &);
 
       //overload -= operator
-      SUP &operator-=(SUP &);
+      SUP &operator-=(const SUP &);
 
       //overload equality operator
-      SUP &operator=(SUP &);
+      SUP &operator=(const SUP &);
 
       //overload equality operator
       SUP &operator=(double );
 
       TPM &tpm(int i);
 
+      const TPM &tpm(int i) const;
+
       //initialiseer S
       void init_S();
 
       //initialiseer Z
-      void init_Z(double alpha,TPM &ham,SUP &u_0);
+      void init_Z(double alpha,const TPM &ham,const SUP &u_0);
 
-      int gN();
+      int gN() const;
 
-      int gM();
+      int gM() const;
 
-      int gn_tp();
+      int gn_tp() const;
 
-      int gdim();
+      int gdim() const;
 
-      double ddot(SUP &);
+      double ddot(const SUP &) const;
 
       void invert();
 
@@ -120,41 +83,41 @@ class SUP{
 
       void proj_U();
 
-      void proj_C(TPM &);
+      void proj_C(const TPM &);
 
       //maak de matrix D, nodig voor de hessiaan van het stelsel
-      void D(SUP &S,SUP &Z);
+      void D(const SUP &S,const SUP &Z);
 
       //positieve of negatieve vierkantswortel uit een supermatrix
       void sqrt(int option);
 
-      void L_map(SUP &,SUP &);
+      void L_map(const SUP &,const SUP &);
 
-      void daxpy(double alpha,SUP &);
+      void daxpy(double alpha,const SUP &);
 
-      double trace();
+      double trace() const;
 
-      double U_trace();
+      double U_trace() const;
 
       void proj_C();
 
-      SUP &mprod(SUP &,SUP &);
+      SUP &mprod(const SUP &,const SUP &);
 
-      void fill(TPM &);
+      void fill(const TPM &);
 
       void fill();
 
-      int solve(SUP &B,SUP &D);
+      int solve(SUP &B,const SUP &D);
 
-      void H(SUP &B,SUP &D);
+      void H(const SUP &B,const SUP &D);
 
       void proj_U_Tr();
 
-      double U_norm();
+      double U_norm() const;
 
-      double center_dev(SUP &Z);
+      double center_dev(const SUP &Z) const;
 
-      double line_search(SUP &DZ,SUP &S,SUP &Z,double max_dev);
+      double line_search(const SUP &DZ,const SUP &S,const SUP &Z,double max_dev) const;
 
       void fill_Random();
 
@@ -164,7 +127,9 @@ class SUP{
 
       PHM &phm();
 
-      int gn_ph();
+      const PHM &phm() const;
+
+      int gn_ph() const;
 
 #endif
 
@@ -172,7 +137,9 @@ class SUP{
       
       DPM &dpm();
 
-      int gn_dp();
+      const DPM &dpm() const;
+
+      int gn_dp() const;
 
 #endif
 
@@ -180,7 +147,9 @@ class SUP{
 
       PPHM &pphm();
 
-      int gn_pph();
+      const PPHM &pphm() const;
+
+      int gn_pph() const;
 
 #endif
 

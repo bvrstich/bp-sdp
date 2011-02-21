@@ -33,7 +33,7 @@ class PPHM : public Matrix {
       PPHM(int M,int N);
 
       //copy constructor
-      PPHM(PPHM &);
+      PPHM(const PPHM &);
 
       //destructor
       virtual ~PPHM();
@@ -46,20 +46,20 @@ class PPHM : public Matrix {
       double operator()(int a,int b,int c,int d,int e,int f) const;
 
       //geef N terug
-      int gN();
+      int gN() const;
 
       //geef M terug
-      int gM();
+      int gM() const;
 
       //geef dim terug
-      int gn();
+      int gn() const;
 
       //maak een PPHM van een TPM via de T2 conditie
-      void T(int option,TPM &);
+      void T(int option,const TPM &);
 
       void min_tunit(double );
 
-      double skew_trace();
+      double skew_trace() const;
 
    private:
 

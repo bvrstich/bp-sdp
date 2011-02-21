@@ -72,7 +72,7 @@ TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2) {
  * if counter == 0, the lists containing the relationship between sp and tp basis.
  * @param tpm_c object that will be copied into this.
  */
-TPM::TPM(TPM &tpm_c) : Matrix(tpm_c){
+TPM::TPM(const TPM &tpm_c) : Matrix(tpm_c){
 
    this->N = tpm_c.N;
    this->M = tpm_c.M;
@@ -250,7 +250,7 @@ ostream &operator<<(ostream &output,TPM &tpm_p){
 /**
  * @return number of particles
  */
-int TPM::gN(){
+int TPM::gN() const {
 
    return N;
 
@@ -259,7 +259,7 @@ int TPM::gN(){
 /**
  * @return number of sp orbitals
  */
-int TPM::gM(){
+int TPM::gM() const {
 
    return M;
 
@@ -268,7 +268,7 @@ int TPM::gM(){
 /**
  * @return de dimensie of the tp matrix space
  */
-int TPM::gn(){
+int TPM::gn() const {
 
    return n;
 
@@ -342,7 +342,7 @@ void TPM::hubbard(int option,double U){
  * @param option = 1, regular Q map , = -1 inverse Q map
  * @param tpm_d the TPM of which the Q map is taken and saved in this.
  */
-void TPM::Q(int option,TPM &tpm_d){
+void TPM::Q(int option,const TPM &tpm_d){
 
    double a = 1;
    double b = 1.0/(N*(N - 1.0));
@@ -360,7 +360,7 @@ void TPM::Q(int option,TPM &tpm_d){
  * @param C factor in front of the single particle piece of the map
  * @param tpm_d the TPM of which the Q-like map is taken and saved in this.
  */
-void TPM::Q(int option,double A,double B,double C,TPM &tpm_d){
+void TPM::Q(int option,double A,double B,double C,const TPM &tpm_d){
 
    if(option == -1){
 
@@ -445,7 +445,7 @@ void TPM::proj_Tr(){
  * @param b TPM domain matrix, hessian will act on it and the image will be put in this
  * @param D SUP matrix that defines the structure of the hessian map. (see primal-dual.pdf for more info)
  */
-void TPM::H(TPM &b,SUP &D){
+void TPM::H(const TPM &b,const SUP &D){
 
    this->L_map(D.tpm(0),b);
 
@@ -523,7 +523,7 @@ void TPM::H(TPM &b,SUP &D){
  * @param D SUP matrix that defines the structure of the hessian
  * @return return number of iterations needed to converge to the desired accuracy
  */
-int TPM::solve(TPM &b,SUP &D){
+int TPM::solve(TPM &b,const SUP &D){
 
    *this = 0;
 
@@ -574,7 +574,7 @@ int TPM::solve(TPM &b,SUP &D){
  * @param option = 1, G_down - map is used, = -1 G^{-1}_up - map is used.
  * @param phm input PHM 
  */
-void TPM::G(int option,PHM &phm){
+void TPM::G(int option,const PHM &phm){
 
    SPM spm(M,N);
 
@@ -625,7 +625,7 @@ void TPM::G(int option,PHM &phm){
  * @param option = 1 direct overlapmatrix-map is used , = -1 inverse overlapmatrix map is used
  * @param tpm_d the input TPM
  */
-void TPM::S(int option,TPM &tpm_d){
+void TPM::S(int option,const TPM &tpm_d){
 
    double a = 1.0;
    double b = 0.0;
@@ -699,7 +699,7 @@ void TPM::min_qunit(double scale){
  * TPM(a,b,d,e) = sum_{c} DPM(a,b,c,d,e,c)
  * @param dpm input DPM
  */
-void TPM::bar(DPM &dpm){
+void TPM::bar(const DPM &dpm){
 
    int a,b,c,d;
 
@@ -731,7 +731,7 @@ void TPM::bar(DPM &dpm){
  * @param option = +1 T1_down , =-1 inverse T1_up
  * @param dpm The input DPM
  */
-void TPM::T(int option,DPM &dpm){
+void TPM::T(int option,const DPM &dpm){
 
    TPM tpm(M,N);
    tpm.bar(dpm);
@@ -761,7 +761,7 @@ void TPM::T(int option,DPM &dpm){
  * Map a PPHM (pphm) object on a TPM (*this) object by tracing one pair of indices from the pphm (for more info, see primal_dual.pdf)
  * @param pphm input PPHM
  */
-void TPM::bar(PPHM &pphm){
+void TPM::bar(const PPHM &pphm){
 
    int a,b,c,d;
 
@@ -791,7 +791,7 @@ void TPM::bar(PPHM &pphm){
  * Map a PPHM (pphm) onto a TPM object (*this) with a T2 down map, see primal_dual.pdf for more information
  * @param pphm input PPHM
  */
-void TPM::T(PPHM &pphm){
+void TPM::T(const PPHM &pphm){
 
    //first make some necessary derivate matrices of pphm
    TPM bar(M,N);
@@ -856,7 +856,7 @@ void TPM::T(PPHM &pphm){
  * @param option = 0, project onto full symmetric matrix space, = 1 project onto traceless symmetric matrix space
  * @param S input SUP
  */
-void TPM::collaps(int option,SUP &S){
+void TPM::collaps(int option,const SUP &S){
 
    *this = S.tpm(0);
 
@@ -899,7 +899,7 @@ void TPM::collaps(int option,SUP &S){
  * Print TPM matrix to file called filename
  * @param filename char containing the name and location of the file
  */
-void TPM::out(const char *filename){
+void TPM::out(const char *filename) const {
 
    this->Matrix::out(filename);
 
