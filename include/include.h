@@ -49,4 +49,7 @@
 #include "SUP.h"
 #include "EIG.h"
 
+#include "LinCon.h"
+#include "LinIneq.h"
+
 /* vim: set ts=3 sw=3 expandtab :*/

@@ -5,6 +5,7 @@
 #include <fstream>
 
 using std::ostream;
+using std::ifstream;
 
 #include "Matrix.h"
 
@@ -33,7 +34,7 @@ class TPM : public Matrix {
     * @param output The stream to which you are writing (e.g. cout)
     * @param tpm_p the TPM you want to print
     */
-   friend ostream &operator<<(ostream &output,TPM &tpm_p);
+   friend ostream &operator<<(ostream &output,const TPM &tpm_p);
 
    public:
       
@@ -113,6 +114,12 @@ class TPM : public Matrix {
 
       void in_sp(const char *);
 
+      void set_S_2();
+
+      static void constr_overlap(int,int);
+
+      void in_ifstream(ifstream &);
+
    private:
 
       //!static list of dimension [n_tp][2] that takes in a tp index i and returns two sp indices: a = t2s[i][0] and b = t2s[i][1]
@@ -123,6 +130,9 @@ class TPM : public Matrix {
 
       //!static counter that counts the number of TPM objects running in the program
       static int counter;
+
+      //!variables needed for the Q-like overlapmatrix - map.
+      static double S_a,S_b,S_c;
 
       //!nr of particles
       int N;

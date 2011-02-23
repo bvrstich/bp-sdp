@@ -17,6 +17,8 @@ CPPSRC	= bp_sdp.cpp\
             PPHM.cpp\
             SUP.cpp\
             EIG.cpp\
+            LinCon.cpp\
+            LinIneq.cpp
 
 OBJ	= $(CPPSRC:.cpp=.o)
 
@@ -37,7 +39,7 @@ CXX	= g++
 #   Compiler & Linker flags
 # -----------------------------------------------------------------------------
 CFLAGS	= -I$(INCLUDE) -g -Wall
-LDFLAGS	= --g -Wall
+LDFLAGS	= -g -Wall
 
 
 # =============================================================================

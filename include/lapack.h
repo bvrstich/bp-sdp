@@ -19,6 +19,8 @@ extern "C" {
    void dpotrf_(char *uplo,int *n,double *A,int *lda,int *INFO);
    void dpotri_(char *uplo,int *n,double *A,int *lda,int *INFO);
    void dsyevr_( char* jobz, char* range, char* uplo, int* n, double* a, int* lda, double* vl, double* vu, int* il, int* iu, double* abstol, int* m, double* w, double* z, int* ldz, int* isuppz, double* work, int* lwork, int* iwork, int* liwork, int* info );
+   void dgetri_(int *n,double *A,int *lda,int *ipiv,double *work,int *lwork,int *info);
+   void dgetrf_(int *m,int *n,double *A,int *lda,int *ipiv,int *info);
 
 }
 

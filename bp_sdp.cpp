@@ -1,10 +1,10 @@
 /**
  * @mainpage 
- * This is an implementation of a boundary point method to solve a semidefinite program:
+ * This is an implementation of a boundary point method to solve a semidefinite program with linear inequality constraints:
  * we optimizing the second order density matrix using the P Q G T1 and T2 N-representability conditions.
  * At compile time you can decide which condtions will be active compile with make PQ, PQG, PQGT1, PQGT2 or PQGT=(for all conditions).
  * @author Brecht Verstichel, Ward Poelmans
- * @date 21-01-2011
+ * @date 23-02-2011
  */
 
 #include <iostream>
@@ -179,8 +179,6 @@ int main(int argc,char **argv)
 
          D_conv = sqrt(v.ddot(v));
 
-         //cout << "D\t\t\t" << D_conv << endl;
-
      }
 
       //update primal:
@@ -194,7 +192,7 @@ int main(int argc,char **argv)
       W -= Z;
 
       P_conv = sqrt(W.ddot(W));
-
+/*
       if(iter_primal == change_sigma){
 
          sigma *= P_conv/D_conv;
@@ -202,8 +200,14 @@ int main(int argc,char **argv)
          iter_primal = 0;
 
       }
-
-      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
+*/
+      
+      if(D_conv < P_conv)
+         sigma *= 1.01;
+      else
+         sigma /= 1.01;
+         
+         cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
 
    }
 

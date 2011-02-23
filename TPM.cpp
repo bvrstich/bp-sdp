@@ -15,6 +15,54 @@ int TPM::counter = 0;
 int **TPM::t2s;
 int **TPM::s2t;
 
+double TPM::S_a;
+double TPM::S_b;
+double TPM::S_c;
+
+/**
+ * Will calculate the parameters needed for the overlapmatrix-map: S_a,S_b and S_c.
+ * @param M nr of sp orbitals
+ * @param N nr of particles
+ */
+void TPM::constr_overlap(int M,int N){
+
+   S_a = 1.0;
+   S_b = 0.0;
+   S_c = 0.0;
+
+#ifdef __Q_CON
+
+   S_a += 1.0;
+   S_b += (4.0*N*N + 2.0*N - 4.0*N*M + M*M - M)/(N*N*(N - 1.0)*(N - 1.0));
+   S_c += (2.0*N - M)/((N - 1.0)*(N - 1.0));
+
+#endif
+
+#ifdef __G_CON
+
+   S_a += 4.0;
+   S_c += (2.0*N - M - 2.0)/((N - 1.0)*(N - 1.0));
+
+#endif
+
+#ifdef __T1_CON
+
+   S_a += M - 4.0;
+   S_b += (M*M*M - 6.0*M*M*N -3.0*M*M + 12.0*M*N*N + 12.0*M*N + 2.0*M - 18.0*N*N - 6.0*N*N*N)/( 3.0*N*N*(N - 1.0)*(N - 1.0) );
+   S_c -= (M*M + 2.0*N*N - 4.0*M*N - M + 8.0*N - 4.0)/( 2.0*(N - 1.0)*(N - 1.0) );
+
+#endif
+
+#ifdef __T2_CON
+   
+   S_a += 5.0*M - 8.0;
+   S_b += 2.0/(N - 1.0);
+   S_c += (2.0*N*N + (M - 2.0)*(4.0*N - 3.0) - M*M)/(2.0*(N - 1.0)*(N - 1.0));
+
+#endif
+
+}
+
 /**
  * standard constructor: constructs Matrix object of dimension M*(M - 1)/2 and
  * if counter == 0, allocates and constructs the lists containing the relationship between sp and tp basis.
@@ -61,6 +109,8 @@ TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2) {
          for(int j = i + 1;j < M;++j)
             s2t[j][i] = s2t[i][j];
 
+      constr_overlap(M,N);
+
    }
 
    ++counter;
@@ -77,42 +127,6 @@ TPM::TPM(const TPM &tpm_c) : Matrix(tpm_c){
    this->N = tpm_c.N;
    this->M = tpm_c.M;
    this->n = M*(M - 1)/2;
-
-   if(counter == 0){
-
-      //allocatie van sp2tp
-      s2t = new int * [M];
-      s2t[0] = new int [M*M];
-
-      for(int i = 1;i < M;++i)
-         s2t[i] = s2t[i - 1] + M;
-
-      //allocatie van tp2sp
-      t2s = new int * [n];
-
-      for(int i = 0;i < n;++i)
-         t2s[i] = new int [2];
-
-      //initialisatie van de twee arrays
-      int teller = 0;
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j){
-
-            s2t[i][j] = teller;
-
-            t2s[teller][0] = i;
-            t2s[teller][1] = j;
-
-            ++teller;
-
-         }
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j)
-            s2t[j][i] = s2t[i][j];
-
-   }
 
    ++counter;
 
@@ -173,6 +187,8 @@ TPM::TPM(const char *filename) : Matrix(filename){
          for(int j = i + 1;j < M;++j)
             s2t[j][i] = s2t[i][j];
 
+      constr_overlap(M,N);
+
    }
 
    ++counter;
@@ -232,7 +248,7 @@ double TPM::operator()(int a,int b,int c,int d) const{
 
 }
 
-ostream &operator<<(ostream &output,TPM &tpm_p){
+ostream &operator<<(ostream &output,const TPM &tpm_p){
 
    for(int i = 0;i < tpm_p.n;++i)
       for(int j = 0;j < tpm_p.n;++j){
@@ -627,42 +643,7 @@ void TPM::G(int option,const PHM &phm){
  */
 void TPM::S(int option,const TPM &tpm_d){
 
-   double a = 1.0;
-   double b = 0.0;
-   double c = 0.0;
-
-#ifdef __Q_CON
-
-   a += 1.0;
-   b += (4.0*N*N + 2.0*N - 4.0*N*M + M*M - M)/(N*N*(N - 1.0)*(N - 1.0));
-   c += (2.0*N - M)/((N - 1.0)*(N - 1.0));
-
-#endif
-
-#ifdef __G_CON
-
-   a += 4.0;
-   c += (2.0*N - M - 2.0)/((N - 1.0)*(N - 1.0));
-
-#endif
-
-#ifdef __T1_CON
-
-   a += M - 4.0;
-   b += (M*M*M - 6.0*M*M*N -3.0*M*M + 12.0*M*N*N + 12.0*M*N + 2.0*M - 18.0*N*N - 6.0*N*N*N)/( 3.0*N*N*(N - 1.0)*(N - 1.0) );
-   c -= (M*M + 2.0*N*N - 4.0*M*N - M + 8.0*N - 4.0)/( 2.0*(N - 1.0)*(N - 1.0) );
-
-#endif
-
-#ifdef __T2_CON
-   
-   a += 5.0*M - 8.0;
-   b += 2.0/(N - 1.0);
-   c += (2.0*N*N + (M - 2.0)*(4.0*N - 3.0) - M*M)/(2.0*(N - 1.0)*(N - 1.0));
-
-#endif
-
-   this->Q(option,a,b,c,tpm_d);
+   this->Q(option,S_a,S_b,S_c,tpm_d);
 
 }
 
@@ -977,6 +958,74 @@ void TPM::sp_pairing(double pair_coupling){
 void TPM::in_sp(const char *filename){
 
    ifstream input(filename);
+
+   double value;
+
+   int a,b,c,d;
+
+   int i,j;
+
+   while(input >> a >> b >> c >> d >> value){
+
+      i = s2t[a][b];
+      j = s2t[c][d];
+
+      (*this)(i,j) = value;
+
+   }
+
+   this->symmetrize();
+
+}
+
+/**
+ * fill the TPM object with the S^2 matrix
+ */
+void TPM::set_S_2(){
+
+   int a,b,c,d;
+
+   double s_a,s_b;
+
+   for(int i = 0;i < n;++i){
+
+      a = t2s[i][0];
+      b = t2s[i][1];
+
+      for(int j = i;j < n;++j){
+
+         c = t2s[j][0];
+         d = t2s[j][1];
+
+         //init
+         (*this)(i,j) = 0.0;
+
+         if(i == j){//diagonal stuff
+
+            s_a = ( 1.0 - 2 * (a % 2) )/2;
+            s_b = ( 1.0 - 2 * (b % 2) )/2;
+
+            (*this)(i,i) = (1 + s_a*s_a + s_b*s_b)/(N - 1.0) + 2*s_a*s_b;
+
+            if(a/2 == b/2 && a % 2 == 0 && b % 2 == 1)
+               (*this)(i,i) -= 1.0;
+
+         }
+
+         //then the off-diagonal elements
+         if(a % 2 == 0 && b % 2 == 1 && a/2 != b/2)//a up and b down
+            if(a + 1 == c && b == d + 1)
+               (*this)(i,j) += 1.0;
+
+      }
+
+   }
+
+   this->symmetrize();
+
+}
+
+void TPM::in_ifstream(ifstream &input){
 
    double value;
 
