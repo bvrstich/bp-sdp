@@ -6,8 +6,7 @@
 
 using std::ostream;
 
-#include "Vector.h"
-#include "SUP.h"
+#include "include.h"
 
 /**
  * @author Brecht Verstichel
@@ -28,7 +27,7 @@ class EIG{
     * @param output The stream to which you are writing (e.g. cout)
     * @param eig_p the EIG you want to print
     */
-   friend ostream &operator<<(ostream &output,EIG &eig_p);
+   friend ostream &operator<<(ostream &output,const EIG &eig_p);
 
    public:
 
@@ -59,17 +58,13 @@ class EIG{
       //overload equality operator
       EIG &operator=(const EIG &);
 
-      Vector<TPM> &tpv(int);
-
-      const Vector<TPM> &tpv(int) const;
+      Vector<TPM> &tpv(int) const;
 
 #ifdef __G_CON
 
       int gn_ph() const;
 
-      Vector<PHM> &phv();
-
-      const Vector<PHM> &phv() const;
+      Vector<PHM> &phv() const;
 
 #endif
 
@@ -77,9 +72,7 @@ class EIG{
 
       int gn_dp() const;
 
-      Vector<DPM> &dpv();
-
-      const Vector<DPM> &dpv() const;
+      Vector<DPM> &dpv() const;
 
 #endif
 
@@ -87,9 +80,7 @@ class EIG{
 
       int gn_pph() const;
 
-      Vector<PPHM> &pphv();
-
-      const Vector<PPHM> &pphv() const;
+      Vector<PPHM> &pphv() const;
 
 #endif
 
@@ -98,6 +89,14 @@ class EIG{
       double max() const;
 
       double center_dev() const;
+
+      int gnr() const;
+
+      double *gli();
+
+      const double *gli() const;
+
+      double gli(int) const;
 
    private:
 
@@ -137,12 +136,27 @@ class EIG{
 
 #ifdef __T2_CON
 
-      //!pointer to a Vector<PPHM> object that will contain the eigenvalues of the T1 part of a SUP matrix
+      //!pointer to a Vector<PPHM> object that will contain the eigenvalues of the T2 part of a SUP matrix
       Vector<PPHM> *v_pph;
 
       int n_pph;
 
 #endif
+
+#ifdef __T2P_CON
+
+      //!pointer to a Vector<T2PM> object that will contain the eigenvalues of the T2P part of a SUP matrix
+      Vector<T2PM> *v_t2p;
+
+      int n_t2p;
+
+#endif
+      
+      //!double array containing the projections on the constraints
+      double *li;
+
+      //!the number of linear constraints
+      int nr;
 
       //!total dimension of the EIG object
       int dim;

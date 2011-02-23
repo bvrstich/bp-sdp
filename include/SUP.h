@@ -6,10 +6,7 @@
 
 using std::ostream;
 
-#include "TPM.h"
-#include "PHM.h"
-#include "DPM.h"
-#include "PPHM.h"
+#include "include.h"
 
 class EIG;
 
@@ -32,7 +29,7 @@ class SUP{
     * @param output The stream to which you are writing (e.g. cout)
     * @param SZ_p the SUP you want to print
     */
-   friend ostream &operator<<(ostream &output,SUP &SZ_p);
+   friend ostream &operator<<(ostream &output,const SUP &SZ_p);
 
    public:
 
@@ -55,7 +52,7 @@ class SUP{
       SUP &operator=(const SUP &);
 
       //overload equality operator
-      SUP &operator=(double );
+      SUP &operator=(const double &);
 
       TPM &tpm(int i);
 
@@ -95,10 +92,6 @@ class SUP{
 
       void daxpy(double alpha,const SUP &);
 
-      double trace() const;
-
-      double U_trace() const;
-
       void proj_C();
 
       SUP &mprod(const SUP &,const SUP &);
@@ -111,17 +104,11 @@ class SUP{
 
       void H(const SUP &B,const SUP &D);
 
-      void proj_U_Tr();
-
-      double U_norm() const;
-
       double center_dev(const SUP &Z) const;
 
       double line_search(const SUP &DZ,const SUP &S,const SUP &Z,double max_dev) const;
 
       void fill_Random();
-
-      void sep_pm(SUP &p,SUP &m);
 
 #ifdef __G_CON
 
@@ -152,6 +139,14 @@ class SUP{
       int gn_pph() const;
 
 #endif
+
+      LinIneq &gli();
+
+      const LinIneq &gli() const;
+
+      int gnr() const;
+
+      void sep_pm(SUP &p,SUP &m);
 
    private:
 
@@ -199,6 +194,19 @@ class SUP{
       int n_pph;
 
 #endif
+
+#ifdef __T2P_CON
+
+      //!pointer tot he three particles matrix DPM
+      T2PM *SZ_t2p;
+
+      //!dimension of three particle space
+      int n_t2p;
+
+#endif
+      
+      //!the object containing the linear constraint info.
+      LinIneq *li;
 
 };
 

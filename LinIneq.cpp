@@ -552,3 +552,29 @@ void LinIneq::print_coef() {
       cout << i << "\t" << coef[i] << endl;
 
 }
+
+/**
+ * seperate into positive and negative part.
+ * @param p positive part
+ * @param m negative part
+ */
+void LinIneq::sep_pm(LinIneq &p,LinIneq &m){
+
+   for(int i = 0;i < nr;++i){
+
+      if(proj[i] > 0.0){
+
+         p.proj[i] = proj[i];
+         m.proj[i] = 0.0;
+
+      }
+      else{
+
+         m.proj[i] = proj[i];
+         p.proj[i] = 0.0;
+
+      }
+
+   }
+
+}

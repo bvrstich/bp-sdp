@@ -871,6 +871,10 @@ void TPM::collaps(int option,const SUP &S){
 
 #endif
 
+   //and last but not least, the linear constraints
+   for(int i = 0;i < S.gli().gnr();++i)
+      this->daxpy(S.gli().gproj(i),S.gli()[i].gI());
+
    if(option == 1)
       this->proj_Tr();
 
@@ -1039,6 +1043,129 @@ void TPM::in_ifstream(ifstream &input){
       j = s2t[c][d];
 
       (*this)(i,j) = value;
+
+   }
+
+   this->symmetrize();
+
+}
+
+/**
+ * ( Overlapmatrix of the U-basis ) - map, maps a traceless TPM onto a different traceless TPM, this map is actually a Q-like map
+ * for which the paramaters a,b and c are calculated in primal_dual.pdf. Since it is a Q-like map the inverse
+ * can be taken as well. This includes the terms added due to the Linear inequality constraints.
+ * @param option = 1 direct overlapmatrix-map is used , = -1 inverse overlapmatrix map is used
+ * @param tpm_d the input TPM
+ */
+void TPM::S_L(int option,const TPM &tpm_d){
+
+   LinIneq li(M,N);
+   li.fill(tpm_d);
+
+   if(option == -1){
+
+      //first make some parameters needed for the inverse:
+      double A = li.ga();
+      double C = li.gc();
+
+      double kappa = A - C*(M - 2.0);
+
+      double alpha[li.gnr()];
+
+      for(int k = 0;k < li.gnr();++k)
+         alpha[k] = li.alpha(k);
+
+      //make the scaled bar of tpm_d
+      SPM spm(M,N);
+      spm.constr(C/(A*kappa),tpm_d);
+
+      //now start the map
+      for(int i = 0;i < n;++i){
+
+         int a = t2s[i][0];
+         int b = t2s[i][1];
+
+         for(int j = i;j < n;++j){
+
+            int c = t2s[j][0];
+            int d = t2s[j][1];
+
+            //regular Q-like part:
+
+            //tp
+            (*this)(i,j) = tpm_d(i,j)/A;
+
+            //3 sp
+            if(a == c)
+               (*this)(i,j) += spm(b,d);
+
+            if(b == c)
+               (*this)(i,j) -= spm(a,d);
+
+            if(b == d)
+               (*this)(i,j) += spm(a,c);
+
+            //constraint part:
+            for(int k = 0;k < li.gnr();++k){
+
+               //tp part
+               (*this)(i,j) -= alpha[k]/(4.0*A) * li[k].gI()(i,j);
+
+               //3 sp
+               if(a == c)
+                  (*this)(i,j) -= C/(4.0*A*kappa) * alpha[k] * li[k].gI_bar()(b,d);
+
+               if(b == c)
+                  (*this)(i,j) += C/(4.0*A*kappa) * alpha[k] * li[k].gI_bar()(a,d);
+
+               if(b == d)
+                  (*this)(i,j) -= C/(4.0*A*kappa) * alpha[k] * li[k].gI_bar()(a,c);
+
+            }
+
+         }
+      }
+
+   }
+   else{
+
+      double A = li.ga();
+      double C = li.gc();
+
+      SPM spm(M,N);
+
+      //construct de spm met schaling C
+      spm.constr(C,tpm_d);
+
+      for(int i = 0;i < n;++i){
+
+         int a = t2s[i][0];
+         int b = t2s[i][1];
+
+         for(int j = i;j < n;++j){
+
+            int c = t2s[j][0];
+            int d = t2s[j][1];
+
+            //tp
+            (*this)(i,j) = A*tpm_d(i,j);
+
+            //3 sp
+            if(a == c)
+               (*this)(i,j) -= spm(b,d);
+
+            if(b == c)
+               (*this)(i,j) += spm(a,d);
+
+            if(b == d)
+               (*this)(i,j) -= spm(a,c);
+
+            //constraint
+            for(int k = 0;k < li.gnr();++k)
+               (*this)(i,j) += li.gproj(k) * li[k].gI()(i,j);
+
+         }
+      }
 
    }
 

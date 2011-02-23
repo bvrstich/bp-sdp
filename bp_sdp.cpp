@@ -79,6 +79,8 @@ int main(int argc,char **argv)
 
    cout << "Starting with M=" << M << " N=" << N << " U=" << U << endl;
 
+   LinIneq::init(M,N,1);
+
    //hamiltoniaan
    TPM ham(M,N);
    ham.hubbard(0,U);
@@ -120,12 +122,10 @@ int main(int argc,char **argv)
    double D_conv(1.0),P_conv(1.0);
 
    // mazziotti uses 1.6 for this
-   double mazzy = 1.6;
+   double mazzy = 1.0;
 
    int iter_dual,iter_primal(0);
    int max_iter = 1;
-
-   int change_sigma = 20;
 
    while(P_conv > tolerance || D_conv > tolerance){
 
@@ -135,8 +135,7 @@ int main(int argc,char **argv)
 
       iter_dual = 0;
 
-      while(D_conv > tolerance  && iter_dual <= max_iter)
-      {
+      while(D_conv > tolerance  && iter_dual <= max_iter){
 
          ++iter_dual;
 
@@ -153,7 +152,7 @@ int main(int argc,char **argv)
 
          b.daxpy(-mazzy/sigma,ham);
 
-         hulp.S(-1,b);
+         hulp.S_L(-1,b);
 
          //hulp is the matrix containing the gamma_i's
          hulp.proj_Tr();
@@ -192,15 +191,6 @@ int main(int argc,char **argv)
       W -= Z;
 
       P_conv = sqrt(W.ddot(W));
-/*
-      if(iter_primal == change_sigma){
-
-         sigma *= P_conv/D_conv;
-
-         iter_primal = 0;
-
-      }
-*/
       
       if(D_conv < P_conv)
          sigma *= 1.01;
@@ -216,6 +206,8 @@ int main(int argc,char **argv)
    cout << "pd gap: " << Z.ddot(X) << endl;
    cout << "dual conv: " << D_conv << endl;
    cout << "primal conv: " << P_conv << endl;
+
+   LinIneq::clean();
 
    return 0;
 

@@ -84,8 +84,6 @@ class LinIneq{
 
       void invert();
 
-      void dcal(double);
-
       void sqrt(int);
 
       void L_map(const LinIneq &,const LinIneq &);
@@ -95,6 +93,8 @@ class LinIneq{
       void dscal(double);
 
       static void print_coef();
+
+      void sep_pm(LinIneq &,LinIneq &);
 
    private:
 
