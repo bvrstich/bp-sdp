@@ -115,11 +115,11 @@ int main(int argc,char **argv)
    Z = 0.0;
 
    //what does this do?
-   double sigma = 1.0;
+   double sigma = 1.6;
 
    double tolerance = 1.0e-7;
 
-   double D_conv(1.0),P_conv(1.0);
+   double D_conv(1.0),P_conv(1.0),convergence(1.0);
 
    // mazziotti uses 1.6 for this
    double mazzy = 1.0;
@@ -127,7 +127,7 @@ int main(int argc,char **argv)
    int iter_dual,iter_primal(0);
    int max_iter = 1;
 
-   while(P_conv > tolerance || D_conv > tolerance){
+   while(fabs(convergence) > tolerance){
 
       ++iter_primal;
 
@@ -196,8 +196,10 @@ int main(int argc,char **argv)
          sigma *= 1.01;
       else
          sigma /= 1.01;
+
+      convergence = ham.ddot(Z.tpm(0)) + X.ddot(u_0);
          
-         cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
+         cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << convergence << endl;
 
    }
 
