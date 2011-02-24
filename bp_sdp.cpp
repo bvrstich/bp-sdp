@@ -122,7 +122,7 @@ int main(int argc,char **argv)
    int iter;
    int max_iter = 1;
 
-   while(fabs(convergence) > tolerance){
+   while(D_conv > tolerance || P_conv > tolerance || fabs(convergence) > tolerance){
 
       D_conv = 1.0;
 
@@ -187,7 +187,7 @@ int main(int argc,char **argv)
 
       convergence = Z.tpm(0).ddot(ham) + X.ddot(u_0);
 
-      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << convergence << endl;
+      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << convergence << "\t" << Z.tpm(0).ddot(ham_copy) << endl;
 
       if(D_conv < P_conv)
          sigma *= 1.01;
