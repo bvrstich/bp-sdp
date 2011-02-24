@@ -127,7 +127,7 @@ int main(int argc,char **argv)
    int iter_dual,iter_primal(0);
    int max_iter = 1;
 
-   while(fabs(convergence) > tolerance){
+   while(fabs(convergence) > tolerance || P_conv > tolerance || D_conv > tolerance){
 
       ++iter_primal;
 
