@@ -117,12 +117,12 @@ int main(int argc,char **argv)
 
    double tolerance = 1.0e-7;
 
-   double D_conv(1.0),P_conv(1.0);
+   double D_conv(1.0),P_conv(1.0),convergence(1.0);
 
    int iter;
    int max_iter = 1;
 
-   while(P_conv > tolerance || D_conv > tolerance){
+   while(fabs(convergence) > tolerance){
 
       D_conv = 1.0;
 
@@ -185,7 +185,9 @@ int main(int argc,char **argv)
 
       P_conv = sqrt(W.ddot(W));
 
-      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
+      convergence = Z.tpm(0).ddot(ham) + X.ddot(u_0);
+
+      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << convergence << endl;
 
       if(D_conv < P_conv)
          sigma *= 1.01;
