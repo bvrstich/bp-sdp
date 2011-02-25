@@ -162,7 +162,7 @@ int main(int argc,char **argv)
 
          V.dscal(-sigma);
 
-         //check infeasibility of the primal problem:
+         //check infeasibility of the dual problem:
          TPM v(M,N);
 
          v.collaps(1,V);
@@ -176,7 +176,7 @@ int main(int argc,char **argv)
       //update primal:
       X = V;
 
-      //check dual feasibility (W is a helping variable now)
+      //check primal feasibility (W is a helping variable now)
       W.fill(hulp);
 
       W += u_0;
