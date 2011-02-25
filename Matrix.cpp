@@ -437,7 +437,7 @@ void Matrix::out(const char *filename) const {
 void Matrix::sep_pm(Matrix &p,Matrix &m){
 
    //init:
-   p = 0;
+   p = *this;
    m = 0;
 
    double *eigenvalues = new double [n];
@@ -456,6 +456,16 @@ void Matrix::sep_pm(Matrix &p,Matrix &m){
 
    delete [] work;
 
+   if( eigenvalues[0] >= 0 )
+      return;
+
+   if( eigenvalues[n-1] < 0)
+   {
+      p = 0;
+      m = *this;
+      return;
+   }
+
    //fill the plus and minus matrix
    int i = 0;
 
@@ -471,17 +481,7 @@ void Matrix::sep_pm(Matrix &p,Matrix &m){
 
    m.symmetrize();
 
-   while(i < n){
-
-      for(int j = 0;j < n;++j)
-         for(int k = j;k < n;++k)
-            p(j,k) += eigenvalues[i] * matrix[i][j] * matrix[i][k];
-
-      ++i;
-
-   }
-
-   p.symmetrize();
+   p -= m;
 
    delete [] eigenvalues;
 
