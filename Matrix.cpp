@@ -437,8 +437,8 @@ void Matrix::out(const char *filename) const {
 void Matrix::sep_pm(Matrix &p,Matrix &m){
 
    //init:
-   p = *this;
-   m = 0;
+   p = 0;
+   m = *this;
 
    double *eigenvalues = new double [n];
 
@@ -456,32 +456,37 @@ void Matrix::sep_pm(Matrix &p,Matrix &m){
 
    delete [] work;
 
+   Matrix copy(*this);
+
    if( eigenvalues[0] >= 0 )
+   {
+      p = *this;
+      m = 0;
       return;
+   }
 
    if( eigenvalues[n-1] < 0)
-   {
-      p = 0;
-      m = *this;
       return;
-   }
 
-   //fill the plus and minus matrix
    int i = 0;
 
-   while(i < n && eigenvalues[i] < 0.0){
+   while(i < n && eigenvalues[i] < 0.0)
+      eigenvalues[i++] = 0;
 
-      for(int j = 0;j < n;++j)
-         for(int k = j;k < n;++k)
-            m(j,k) += eigenvalues[i] * matrix[i][j] * matrix[i][k];
+   int inc = 1;
 
-      ++i;
+   for(i = 0;i < n;++i)
+      dscal_(&n,&eigenvalues[i],matrix[i],&inc);
 
-   }
+   char transA = 'N';
+   char transB = 'T';
 
-   m.symmetrize();
+   double alpha = 1.0;
+   double beta = 0.0;
 
-   p -= m;
+   dgemm_(&transA,&transB,&n,&n,&n,&alpha,matrix[0],&n,copy.matrix[0],&n,&beta,p.matrix[0],&n);
+
+   m -= p;
 
    delete [] eigenvalues;
 
