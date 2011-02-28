@@ -466,7 +466,7 @@ void Matrix::sep_pm(Matrix &p,Matrix &m){
 
    if( eigenvalues[0] >= 0 )
    {
-      p = *this;
+      p = m;
       m = 0;
       return;
    }
@@ -499,8 +499,8 @@ void Matrix::sep_pm(Matrix &p,Matrix &m){
 
    if( eigenvalues[n-1] < 0)
    {
+      m = p;
       p = 0;
-      m = *this;
       return;
    }
 
