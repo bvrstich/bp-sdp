@@ -104,21 +104,41 @@ void Hamiltonian::construct_T(Matrix &T){
 
    T = 0.0;
 
-   int i,j;
+   int x_i,y_i,s_i;
+   int x_j,y_j,s_j;
 
-   for(int x = 0;x < L;++x)
-      for(int y = 0;y < L;++y)
-         for(int s = 0;s < 2;++s){
+   for(int i = 0;i < M;++i){
 
-            i = xys_alpha[x][y][s];
-            j = xys_alpha[(x + 1)%L][y][s];
+      x_i = alpha_xys[i][0];
+      y_i = alpha_xys[i][1];
+      s_i = alpha_xys[i][2];
 
-            T(i,j) = -1.0;
+      for(int j = i;j < M;++j){
 
-            j = xys_alpha[x][(y + 1)%L][s];
+         x_j = alpha_xys[j][0];
+         y_j = alpha_xys[j][1];
+         s_j = alpha_xys[j][2]; 
 
-            T(i,j) = -1.0;
+         if(s_i == s_j){//else nothing happens
+
+            if(x_j == (x_i + 1)%L && y_j == y_i)
+               T(i,j) -= 1.0;
+
+            if((x_j + 1)%L == x_i && y_j == y_i)
+               T(i,j) -= 1.0;
+
+            if(x_j == x_i && y_j == (y_i + 1)%L)
+               T(i,j) -= 1.0;
+
+            if(x_j == x_i && (y_j + 1)%L == y_i)
+               T(i,j) -= 1.0;
 
          }
+
+      }
+
+   }
+
+   T.symmetrize();
 
 }
