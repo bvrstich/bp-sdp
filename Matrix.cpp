@@ -437,8 +437,13 @@ void Matrix::out(const char *filename) const {
 void Matrix::sep_pm(Matrix &p,Matrix &m){
 
    //init:
+#ifdef __INTEL_COMPILER
+   p = 0;
+   m = *this;
+#else
    p = *this;
    m = 0;
+#endif
 
    double *eigenvalues = new double [n];
 
@@ -456,13 +461,46 @@ void Matrix::sep_pm(Matrix &p,Matrix &m){
 
    delete [] work;
 
+#ifdef __INTEL_COMPILER
+   Matrix copy(*this);
+
+   if( eigenvalues[0] >= 0 )
+   {
+      p = m;
+      m = 0;
+      return;
+   }
+
+   if( eigenvalues[n-1] < 0)
+      return;
+
+   int i = 0;
+
+   while(i < n && eigenvalues[i] < 0.0)
+      eigenvalues[i++] = 0;
+
+   int inc = 1;
+
+   for(i = 0;i < n;++i)
+      dscal_(&n,&eigenvalues[i],matrix[i],&inc);
+
+   char transA = 'N';
+   char transB = 'T';
+
+   double alpha = 1.0;
+   double beta = 0.0;
+
+   dgemm_(&transA,&transB,&n,&n,&n,&alpha,matrix[0],&n,copy.matrix[0],&n,&beta,p.matrix[0],&n);
+
+   m -= p;
+#else
    if( eigenvalues[0] >= 0 )
       return;
 
    if( eigenvalues[n-1] < 0)
    {
+      m = p;
       p = 0;
-      m = *this;
       return;
    }
 
@@ -482,6 +520,7 @@ void Matrix::sep_pm(Matrix &p,Matrix &m){
    m.symmetrize();
 
    p -= m;
+#endif
 
    delete [] eigenvalues;
 
