@@ -65,7 +65,9 @@ class TPM : public Matrix {
       //geef n terug
       int gn() const;
 
-      void hubbard(int option,double U);
+      void hubbard_1D(int option,double U);
+
+      void hubbard_2D(double U);
 
       //Q afbeelding en zijn inverse
       void Q(int option,const TPM &);

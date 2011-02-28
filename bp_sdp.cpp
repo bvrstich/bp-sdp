@@ -28,21 +28,21 @@ int main(int argc,char **argv)
    cout.precision(10);
 
    // these are the default values
-   int M = 8;//dim sp hilbert space
+   int L = 2;//dim sp hilbert space
    int N = 4;//nr of particles
    double U = 1;//onsite interaction strength
 
    struct option long_options[] =
    {
       {"particles",  required_argument, 0, 'n'},
-      {"sites",  required_argument, 0, 'm'},
+      {"dimension",  required_argument, 0, 'l'},
       {"interaction", required_argument, 0, 'U'},
       {"help",  no_argument, 0, 'h'},
       {0, 0, 0, 0}
    };
 
    int i,j;
-   while( (j = getopt_long (argc, argv, "hn:m:U:", long_options, &i)) != -1)
+   while( (j = getopt_long (argc, argv, "hn:l:U:", long_options, &i)) != -1)
       switch(j)
       {
          case 'h':
@@ -50,7 +50,7 @@ int main(int argc,char **argv)
             cout << "Usage: " << argv[0] << " [OPTIONS]\n"
                "\n"
                "    -n, --particles=particles    Set the number of particles\n"
-               "    -m, --sites=sites            Set the number of sites\n"
+               "    -l, --dimension=dimension            Set the dimension\n"
                "    -U, --interaction=U          Set the interaction strength\n"
                "    -h, --help                   Display this help\n"
                "\n";
@@ -64,11 +64,11 @@ int main(int argc,char **argv)
                return -1;
             }
             break;
-         case 'm':
-            M = atoi(optarg);
-            if( M <= 0)
+         case 'l':
+            L = atoi(optarg);
+            if( L <= 0)
             {
-               std::cerr << "Invalid particle number!" << endl;
+               std::cerr << "Invalid lattice dimension!" << endl;
                return -2;
             }
             break;
@@ -77,11 +77,15 @@ int main(int argc,char **argv)
             break;
       }
 
-   cout << "Starting with M=" << M << " N=" << N << " U=" << U << endl;
+   cout << "Starting with L=" << L << " N=" << N << " U=" << U << endl;
+
+   Hamiltonian::init(L);
+
+   int M = L*L*2;
 
    //hamiltoniaan
    TPM ham(M,N);
-   ham.hubbard(0,U);
+   ham.hubbard_2D(U);
 
    TPM ham_copy(ham);
 
@@ -117,7 +121,7 @@ int main(int argc,char **argv)
 
    double tolerance = 1.0e-7;
 
-   double D_conv(1.0),P_conv(1.0);
+   double D_conv(1.0),P_conv(1.0),convergence(1.0);
 
    // mazziotti uses 1.6 for this
    double mazzy = 1.6;
@@ -125,9 +129,7 @@ int main(int argc,char **argv)
    int iter_dual,iter_primal(0);
    int max_iter = 1;
 
-   int change_sigma = 20;
-
-   while(P_conv > tolerance || D_conv > tolerance){
+   while(P_conv > tolerance || D_conv > tolerance || fabs(convergence) > tolerance){
 
       ++iter_primal;
 
@@ -195,15 +197,14 @@ int main(int argc,char **argv)
 
       P_conv = sqrt(W.ddot(W));
 
-      if(iter_primal == change_sigma){
+      if(D_conv < P_conv)
+         sigma *= 1.01;
+      else
+         sigma /= 1.01;
 
-         sigma *= P_conv/D_conv;
+      convergence = Z.tpm(0).ddot(ham) + u_0.ddot(X);
 
-         iter_primal = 0;
-
-      }
-
-      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
+      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << convergence << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
 
    }
 
@@ -212,6 +213,8 @@ int main(int argc,char **argv)
    cout << "pd gap: " << Z.ddot(X) << endl;
    cout << "dual conv: " << D_conv << endl;
    cout << "primal conv: " << P_conv << endl;
+
+   Hamiltonian::clear();
 
    return 0;
 

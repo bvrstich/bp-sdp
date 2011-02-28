@@ -279,7 +279,7 @@ int TPM::gn() const {
  * @param U onsite repulsion term
  * @param option == 0 use periodic boundary conditions, == 1 use no pbc
  */
-void TPM::hubbard(int option,double U){
+void TPM::hubbard_1D(int option,double U){
 
    int a,b,c,d;//sp orbitals
 
@@ -990,6 +990,54 @@ void TPM::in_sp(const char *filename){
       j = s2t[c][d];
 
       (*this)(i,j) = value;
+
+   }
+
+   this->symmetrize();
+
+}
+
+/**
+ * construct the two-dimensional hubbard hamiltonian with on site repulsion U
+ * @param U onsite repulsion term
+ */
+void TPM::hubbard_2D(double U){
+
+   int a,b,c,d;//sp orbitals
+
+   double ward = 1.0/(N - 1.0);
+
+   Matrix T(M);
+
+   Hamiltonian::construct_T(T);
+
+   for(int i = 0;i < n;++i){
+
+      a = t2s[i][0];
+      b = t2s[i][1];
+
+      for(int j = i;j < n;++j){
+
+         c = t2s[j][0];
+         d = t2s[j][1];
+
+         (*this)(i,j) = 0.0;
+
+         if(a == c)
+            (*this)(i,j) += ward*T(b,d);
+
+         if(b == c)
+            (*this)(i,j) -= ward*T(a,d);
+
+         if(b == d)
+            (*this)(i,j) += ward*T(a,c);
+
+         //on site interaction
+         if(i == j)
+            if(a % 2 == 0 && b == a + 1)
+               (*this)(i,i) += U;
+
+      }
 
    }
 

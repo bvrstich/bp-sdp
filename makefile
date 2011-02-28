@@ -17,6 +17,7 @@ CPPSRC	= bp_sdp.cpp\
             PPHM.cpp\
             SUP.cpp\
             EIG.cpp\
+            Hamiltonian.cpp
 
 OBJ	= $(CPPSRC:.cpp=.o)
 
