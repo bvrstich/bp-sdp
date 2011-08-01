@@ -145,7 +145,8 @@ int main(int argc,char **argv)
 
          b.daxpy(-1.0/sigma,ham);
 
-         hulp.S(-1,b);
+         hulp.solve(b);
+         //hulp.S(-1,b);
 
          //hulp is the matrix containing the gamma_i's
          hulp.proj_Tr();

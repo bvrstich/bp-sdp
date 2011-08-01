@@ -84,7 +84,7 @@ class TPM : public Matrix {
       void H(const TPM &b,const SUP &D);
 
       //los het stelsel op
-      int solve(TPM &b,const SUP &D);
+      int solve(TPM &b);
 
       //de G down en inverse G up
       void G(int option,const PHM &);

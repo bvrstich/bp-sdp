@@ -516,14 +516,13 @@ void TPM::H(const TPM &b,const SUP &D){
 }
 
 /**
- * Implementation of a linear conjugate gradient algoritm for the solution of the primal Newton equations\n\n
- * H(*this) =  b\n\n 
- * in which H represents the hessian map.
+ * Implementation of a linear conjugate gradient algoritm for the solution the overlapmatrix-system:
+ * S(*this) =  b\n\n 
+ * in which S represents the overlapmatrix-map.
  * @param b righthandside of the equation
- * @param D SUP matrix that defines the structure of the hessian
  * @return return number of iterations needed to converge to the desired accuracy
  */
-int TPM::solve(TPM &b,const SUP &D){
+int TPM::solve(TPM &b){
 
    *this = 0;
 
@@ -533,8 +532,8 @@ int TPM::solve(TPM &b,const SUP &D){
    double rr = r.ddot(r);
    double rr_old,ward;
 
-   //nog de Hb aanmaken ook, maar niet initialiseren:
-   TPM Hb(M,N);
+   //nog de Sb aanmaken ook, maar niet initialiseren:
+   TPM Sb(M,N);
 
    int cg_iter = 0;
 
@@ -542,15 +541,15 @@ int TPM::solve(TPM &b,const SUP &D){
 
       ++cg_iter;
 
-      Hb.H(b,D);
+      Sb.S(1,b);
 
-      ward = rr/b.ddot(Hb);
+      ward = rr/b.ddot(Sb);
 
       //delta += ward*b
       this->daxpy(ward,b);
 
       //r -= ward*Hb
-      r.daxpy(-ward,Hb);
+      r.daxpy(-ward,Sb);
 
       //nieuwe r_norm maken
       rr_old = rr;
