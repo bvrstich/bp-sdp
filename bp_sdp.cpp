@@ -203,7 +203,7 @@ int main(int argc,char **argv)
 
       }
 
-      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
+      cout << Z.tpm(0).trace() << "\t" << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << ham_copy.ddot(Z.tpm(0)) << endl;
 
    }
 
