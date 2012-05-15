@@ -199,12 +199,16 @@ int main(int argc,char **argv)
 
       convergence = ham.ddot(Z.tpm(0)) + X.ddot(u_0);
          
-         cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << convergence << endl;
+      cout << P_conv << "\t" << D_conv << "\t" << sigma << "\t" << convergence << endl;
 
    }
 
+   TPM S_2(M,N);
+   S_2.set_S_2();
+
    cout << endl;
    cout << "Energy: " << ham_copy.ddot(Z.tpm(0)) << endl;
+   cout << "Spin: " << S_2.ddot(Z.tpm(0)) << endl;
    cout << "pd gap: " << Z.ddot(X) << endl;
    cout << "dual conv: " << D_conv << endl;
    cout << "primal conv: " << P_conv << endl;

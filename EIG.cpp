@@ -39,7 +39,7 @@ EIG::EIG(SUP &SZ)
    flag = 1;
 
 #ifdef __G_CON
-   
+
    this->n_ph = M*M;
 
    dim += n_ph;
@@ -49,7 +49,7 @@ EIG::EIG(SUP &SZ)
 #endif
 
 #ifdef __T1_CON
-   
+
    this->n_dp = M*(M - 1)*(M - 2)/6;
 
    dim += n_dp;
@@ -65,7 +65,7 @@ EIG::EIG(SUP &SZ)
    dim += n_pph;
 
    v_pph = new Vector<PPHM>(SZ.pphm());
- 
+
 #endif
 
    this->nr = SZ.gli().gnr();
@@ -204,7 +204,7 @@ EIG::~EIG(){
       delete v_pph;
 
 #endif
-   
+
       delete [] li;
 
    }
@@ -313,25 +313,25 @@ void EIG::diagonalize(SUP &sup)
       v_tp[i]->diagonalize(sup.tpm(i));
 
 #ifdef __G_CON
-   
-      v_ph->diagonalize(sup.phm());
+
+   v_ph->diagonalize(sup.phm());
 
 #endif
 
 #ifdef __T1_CON
-   
-      v_dp->diagonalize(sup.dpm());
+
+   v_dp->diagonalize(sup.dpm());
 
 #endif
 
 #ifdef __T2_CON
-   
-      v_pph->diagonalize(sup.pphm());
+
+   v_pph->diagonalize(sup.pphm());
 
 #endif
 
-      for(int i = 0;i < nr;++i)
-         li[i] = sup.gli().gproj(i);
+   for(int i = 0;i < nr;++i)
+      li[i] = sup.gli().gproj(i);
 
 }
 

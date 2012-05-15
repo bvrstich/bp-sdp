@@ -59,6 +59,8 @@ SUP::SUP(int M,int N){
 
    li = new LinIneq(M,N);
 
+   dim += li->gnr();
+
 }
 
 /**

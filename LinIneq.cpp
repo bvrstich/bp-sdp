@@ -41,7 +41,7 @@ void LinIneq::init(int M,int N,int nr_in){
    //for(int i = 0;i < nr;++i)
       //li[i]->fill_Random();
 
-   li[0]->spincon(1.0);
+   li[0]->spincon(6.0);
 
    //what are the coef's of the overlap matrix without the linear constraints:
    constr_overlap(M,N);
